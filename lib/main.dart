@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'data/contacts_store.dart';
 import 'data/reports_store.dart';
 import 'data/settings_store.dart';
+import 'screens/ask_screen.dart';
 import 'screens/circle_screen.dart';
 import 'screens/home_screen.dart';
 import 'services/protection_service.dart';
@@ -90,10 +91,7 @@ class _AppShellState extends State<AppShell> {
             title: 'Safe Journey',
             text: 'Share your trip with your circle, check in on the way, and get a nudge if something looks off.',
           ),
-          _ComingSoon(
-            title: 'Ask SafeHer',
-            text: 'Ask what to do or where to get help, in Bangla or English, with sources.',
-          ),
+          AskScreen(),
           CircleScreen(),
         ],
       ),

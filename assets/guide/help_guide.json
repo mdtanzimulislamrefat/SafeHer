@@ -1,0 +1,137 @@
+{
+  "version": 1,
+  "checked": "2026-11-08",
+  "note": "Every entry names its source. Entries marked verify:true need checking against an official source before public release.",
+  "entries": [
+    {
+      "id": "emergency-999",
+      "title": "999: National Emergency Service",
+      "title_bn": "৯৯৯: জাতীয় জরুরি সেবা",
+      "text": "999 is free to call from any phone and connects to police, fire service and ambulance. Call it when you or someone else is in immediate danger. It is reported to also take calls about violence, harassment and stalking against women and children.",
+      "numbers": ["999"],
+      "source": "The Daily Star, 'When danger strikes, where can women turn?' (2025); The Daily Star, helpline numbers in an emergency",
+      "url": "https://www.thedailystar.net/supplements/16-days-activism-2025/news/when-danger-strikes-where-can-women-turn-4042526",
+      "verify": false
+    },
+    {
+      "id": "helpline-109",
+      "title": "109: National helpline for violence against women and children",
+      "title_bn": "১০৯: নারী ও শিশু নির্যাতন প্রতিরোধে জাতীয় হেল্পলাইন",
+      "text": "109 is a toll-free, 24-hour helpline run under the Ministry of Women and Children Affairs. It gives information and connects callers to rescue, legal help and psychosocial (counselling) support. It is a good first call after harassment or violence when you are not in immediate danger.",
+      "numbers": ["109"],
+      "source": "The Daily Star (2025); Prothom Alo English, 'Women and children get less service, more information from 109'",
+      "url": "https://en.prothomalo.com/bangladesh/crime-and-law/dzperx8nt7",
+      "verify": false
+    },
+    {
+      "id": "helpline-333",
+      "title": "333: Government information and complaints helpline",
+      "title_bn": "৩৩৩: সরকারি তথ্য ও সেবা হেল্পলাইন",
+      "text": "333 is a government helpline. It is reported as a place to report issues such as child marriage and violence against women.",
+      "numbers": ["333"],
+      "source": "The Daily Star, helpline numbers you may need in an emergency",
+      "url": "https://www.thedailystar.net/toggle/news/helpline-numbers-location-sharing-apps-and-services-you-may-need-emergency-1978905",
+      "verify": false
+    },
+    {
+      "id": "child-1098",
+      "title": "1098: Child Helpline",
+      "title_bn": "১০৯৮: শিশু সহায়তা হেল্পলাইন",
+      "text": "1098 is a helpline for children and for adults calling about a child's safety.",
+      "numbers": ["1098"],
+      "source": "TherapyRoute, crisis lines in Bangladesh",
+      "url": "https://www.therapyroute.com/article/suicide-hotlines-and-crisis-lines-in-bangladesh-by-therapyroute",
+      "verify": false
+    },
+    {
+      "id": "pcsw-cyber",
+      "title": "Police Cyber Support for Women (online harassment)",
+      "title_bn": "পুলিশ সাইবার সাপোর্ট ফর উইমেন (অনলাইন হয়রানি)",
+      "text": "Police Cyber Support for Women (PCSW) is a Police Headquarters unit for women facing online harassment, such as fake accounts, leaked or edited photos, blackmail or threatening messages. Hotline 01320000888, email cybersupport.women@police.gov.bd, Facebook page PCSW.PHQ. Female officers handle complaints, give counselling, keep the victim's information confidential, and the service is free.",
+      "numbers": ["01320000888"],
+      "source": "Bangladesh Police portal; Dhaka Tribune, 'Police cell formed to help female victims of cybercrimes'",
+      "url": "https://police.portal.gov.bd/pages/static-pages/6922df86933eb65569e228c0",
+      "verify": false
+    },
+    {
+      "id": "phq-vaw-hotline",
+      "title": "Police HQ hotlines against violence against women",
+      "title_bn": "নারী নির্যাতন প্রতিরোধে পুলিশ সদর দপ্তরের হটলাইন",
+      "text": "In March 2025 Police Headquarters launched 24-hour hotlines to prevent violence against women: 01320002001, 01320002002 and 01320002222. These are for physical, offline harassment and violence; for online harassment use Police Cyber Support for Women.",
+      "numbers": ["01320002001", "01320002002", "01320002222"],
+      "source": "Prothom Alo English, 'Hotline launched at Police HQ to prevent violence against women' (March 2025)",
+      "url": "https://en.prothomalo.com/bangladesh/xt158tzwz7",
+      "verify": true
+    },
+    {
+      "id": "legal-aid",
+      "title": "Free government legal aid helpline",
+      "title_bn": "সরকারি বিনামূল্যে আইনি সহায়তা হেল্পলাইন",
+      "text": "The National Legal Aid Services Organisation (NLASO) gives free legal advice by phone. Its toll-free number has long been 16430; a November 2025 report says it may have changed to 16699, so check before relying on it. It can explain your options, such as filing a case, and refer you to free legal aid for people who cannot afford a lawyer.",
+      "numbers": ["16430"],
+      "source": "BSS (Dec 2025): legal aid advises 192,702 people through toll-free hotline 16430; UNDP Bangladesh",
+      "url": "https://b.bssnews.net/news/342010",
+      "verify": true
+    },
+    {
+      "id": "general-diary",
+      "title": "Filing a GD (General Diary) with the police",
+      "title_bn": "থানায় জিডি (সাধারণ ডায়েরি) করা",
+      "text": "A GD (General Diary) records an incident or threat with the police. You can file one at your nearest police station (thana). In some areas you can file online: register once in the 'Online GD' Android app with your NID, then file at gd.police.gov.bd by choosing the type, district, police station, and the time and place of the incident. You get a GD number and the investigating officer's details. Online coverage is being expanded area by area and the system has had outages, so go to the thana if it does not work for you.",
+      "numbers": [],
+      "source": "UNB, 'How to file General Diary online in Bangladesh'; Dhaka Tribune, online GD launched across Sylhet Range (June 2025)",
+      "url": "https://unb.com.bd/category/lifestyle/filing-gd-how-to-file-general-diary-online-in-bangladesh/96082",
+      "verify": false
+    },
+    {
+      "id": "one-stop-crisis-centre",
+      "title": "One-Stop Crisis Centres (OCC) at hospitals",
+      "title_bn": "হাসপাতালে ওয়ান-স্টপ ক্রাইসিস সেন্টার (ওসিসি)",
+      "text": "One-Stop Crisis Centres in government medical college hospitals help women and children who faced violence in one place: medical care, help with police, legal aid and counselling. The first opened at Dhaka Medical College Hospital in 2001, and the government plans one in every public medical college. Smaller One-Stop Crisis Cells exist at some district and upazila hospitals. A 2020 report gives an OCC helpline, 10921; check it before relying on it.",
+      "numbers": ["10921"],
+      "source": "The Daily Star, 'All public medical colleges to have one-stop crisis centres'; Bangladesh Post / BSS (2020)",
+      "url": "https://bangladeshpost.net/posts/one-stop-centres-help-woman-children-to-cope-with-crisis-situation-19729",
+      "verify": true
+    },
+    {
+      "id": "victim-support-centre",
+      "title": "Police Victim Support Centres",
+      "title_bn": "পুলিশের ভিকটিম সাপোর্ট সেন্টার",
+      "text": "Dhaka Metropolitan Police runs Victim Support Centres for women and child victims of violence, staffed by police together with NGOs, under its Women Support and Investigation Division.",
+      "numbers": [],
+      "source": "Dhaka Metropolitan Police, Victim Support",
+      "url": "https://dmp.gov.bd/victim-support/",
+      "verify": false
+    },
+    {
+      "id": "tip-followed",
+      "title": "If someone is following you",
+      "title_bn": "কেউ পিছু নিলে",
+      "text": "Go into a busy, well-lit place such as a shop, pharmacy or a crowd. Call someone you trust and stay on the phone, or hold SafeHer's SOS button so your circle gets your location. If you feel in danger, call 999. Afterwards, write down what happened while you remember it.",
+      "numbers": ["999"],
+      "source": "SafeHer general safety tips (not an official source)",
+      "url": "",
+      "verify": false
+    },
+    {
+      "id": "tip-online-harassment",
+      "title": "If you are harassed or blackmailed online",
+      "title_bn": "অনলাইনে হয়রানি বা ব্ল্যাকমেইল হলে",
+      "text": "Do not delete the messages: take screenshots that show the account name, date and link. Do not send money or more photos to someone blackmailing you. Report the account on the platform, and contact Police Cyber Support for Women.",
+      "numbers": ["01320000888"],
+      "source": "SafeHer general safety tips; Police Cyber Support for Women",
+      "url": "",
+      "verify": false
+    },
+    {
+      "id": "tip-evidence",
+      "title": "Keeping a record and recordings",
+      "title_bn": "ঘটনার রেকর্ড রাখা",
+      "text": "Write down the date, time, place, what was said or done, what the person looked like, and who saw it. SafeHer's 'Write down what happened' keeps this on your phone. Laws on recording other people differ, and SafeHer cannot say whether a recording will be accepted by police or a court; ask the free legal aid helpline.",
+      "numbers": ["16430"],
+      "source": "SafeHer general guidance (not legal advice)",
+      "url": "",
+      "verify": false
+    }
+  ]
+}

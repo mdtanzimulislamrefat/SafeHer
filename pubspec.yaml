@@ -59,6 +59,10 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+  # Checked help guide that Ask SafeHer answers from; edit the JSON to update it.
+  assets:
+    - assets/guide/help_guide.json
+
   # Both fonts are SIL OFL; licences sit next to them in assets/fonts.
   fonts:
     - family: HindSiliguri

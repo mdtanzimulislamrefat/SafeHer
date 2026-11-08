@@ -43,6 +43,7 @@ class _RecordReportScreenState extends State<RecordReportScreen> {
     super.initState();
     _protection = context.read<ProtectionService>();
   }
+
   ReportLanguage _language = ReportLanguage.english;
   String? _path;
   Duration _elapsed = Duration.zero;
