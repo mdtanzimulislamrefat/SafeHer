@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../data/contacts_store.dart';
+import '../data/settings_store.dart';
 import '../services/permissions.dart';
+import '../services/protection_service.dart';
+import '../services/scream_detector.dart';
 import '../services/sos_controller.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 import '../widgets/hold_to_alert.dart';
 import 'circle_screen.dart';
 import 'helplines_screen.dart';
+import 'protection_sheets.dart';
 import 'sos_countdown_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -94,17 +98,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 ],
                 const SizedBox(height: 22),
                 const SectionLabel('Protection'),
-                const SafeRow(
-                  leading: LeadIcon(Icons.mic),
-                  title: 'Listen for screams',
-                  subtitle: 'On-device only. Nothing is recorded.',
-                  trailing: _SoonTag(),
-                ),
-                const SafeRow(
-                  leading: LeadIcon(Icons.vibration),
+                const _ScreamRow(),
+                SafeRow(
+                  leading: const LeadIcon(Icons.vibration),
                   title: 'Shake to alert',
                   subtitle: '3 strong shakes start the countdown',
-                  trailing: _SoonTag(),
+                  trailing: Switch(
+                    value: context.watch<SettingsStore>().shakeEnabled,
+                    onChanged: (v) => context.read<SettingsStore>().setShakeEnabled(v),
+                  ),
+                  onTap: () => openShakeSheet(context),
                   divider: false,
                 ),
                 const SizedBox(height: 18),
@@ -153,7 +156,7 @@ String _greeting(DateTime now) {
 }
 
 /// Shared entry point for every SOS trigger (hold now; shake and scream later).
-Future<void> startSos(BuildContext context, SosTrigger trigger) async {
+Future<void> startSos(BuildContext context, SosTrigger trigger, {String? detail}) async {
   final recipients = context.read<ContactsStore>().sosRecipients;
   if (recipients.isEmpty) {
     await showModalBottomSheet<void>(
@@ -195,7 +198,7 @@ Future<void> startSos(BuildContext context, SosTrigger trigger) async {
     context,
     MaterialPageRoute<void>(
       fullscreenDialog: true,
-      builder: (_) => SosCountdownScreen(trigger: trigger, recipients: recipients),
+      builder: (_) => SosCountdownScreen(trigger: trigger, recipients: recipients, detail: detail),
     ),
   );
 }
@@ -276,6 +279,26 @@ class _SoonTag extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: const Text('Soon', style: SafeText.caption),
+    );
+  }
+}
+
+class _ScreamRow extends StatelessWidget {
+  const _ScreamRow();
+
+  @override
+  Widget build(BuildContext context) {
+    final enabled = context.watch<SettingsStore>().screamEnabled;
+    final scream = context.read<ProtectionService>().scream;
+    return ValueListenableBuilder<ScreamState>(
+      valueListenable: scream.state,
+      builder: (context, s, _) => SafeRow(
+        leading: const LeadIcon(Icons.mic),
+        title: 'Listen for screams',
+        subtitle: enabled ? screamStatusText(s.status) : 'AI checks sudden loud sounds. Nothing is recorded.',
+        trailing: Switch(value: enabled, onChanged: (v) => setScreamEnabled(context, v)),
+        onTap: () => openScreamSheet(context),
+      ),
     );
   }
 }

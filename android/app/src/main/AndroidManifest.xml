@@ -6,6 +6,9 @@
     <!-- Location is read only when an alert is sent. -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- Scream check: loudness is measured on the phone; short loud clips go to Gemini. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-feature android:name="android.hardware.telephony" android:required="false"/>
     <application
         android:label="SafeHer"

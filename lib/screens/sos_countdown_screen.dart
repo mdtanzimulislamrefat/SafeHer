@@ -13,9 +13,12 @@ import 'sos_status_screen.dart';
 
 /// Five seconds to cancel an accidental trigger. Cancelling sends nothing.
 class SosCountdownScreen extends StatefulWidget {
-  const SosCountdownScreen({super.key, required this.trigger, required this.recipients, this.seconds = 5});
+  const SosCountdownScreen({super.key, required this.trigger, required this.recipients, this.detail, this.seconds = 5});
 
   final SosTrigger trigger;
+
+  /// Why it started, e.g. what Gemini heard. Helps her judge a false alarm quickly.
+  final String? detail;
   final List<TrustedContact> recipients;
   final int seconds;
 
@@ -29,11 +32,13 @@ class _SosCountdownScreenState extends State<SosCountdownScreen> with SingleTick
     duration: Duration(seconds: widget.seconds),
   )..forward();
   late int _left = widget.seconds;
+  late final SosController _controller;
   Timer? _tick;
 
   @override
   void initState() {
     super.initState();
+    _controller = context.read<SosController>()..countingDown = true;
     _tick = Timer.periodic(const Duration(seconds: 1), (t) {
       if (_left <= 1) {
         t.cancel();
@@ -47,6 +52,7 @@ class _SosCountdownScreenState extends State<SosCountdownScreen> with SingleTick
 
   @override
   void dispose() {
+    _controller.countingDown = false;
     _tick?.cancel();
     _ring.dispose();
     super.dispose();
@@ -126,6 +132,11 @@ class _SosCountdownScreenState extends State<SosCountdownScreen> with SingleTick
                   'Started by ${widget.trigger.label}',
                   style: const TextStyle(fontSize: 13, color: Color(0xBFFFFFFF)),
                 ),
+                if (widget.detail != null && widget.detail!.isNotEmpty)
+                  Text(
+                    'Gemini heard: “${widget.detail}”',
+                    style: const TextStyle(fontSize: 13, color: Color(0xBFFFFFFF)),
+                  ),
                 const SizedBox(height: 28),
                 FilledButton(
                   style: FilledButton.styleFrom(

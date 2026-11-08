@@ -3,8 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'data/contacts_store.dart';
+import 'data/settings_store.dart';
 import 'screens/circle_screen.dart';
 import 'screens/home_screen.dart';
+import 'services/protection_service.dart';
 import 'services/sos_controller.dart';
 import 'theme.dart';
 
@@ -14,19 +16,47 @@ Future<void> main() async {
   runApp(SafeHerApp(prefs: prefs));
 }
 
-class SafeHerApp extends StatelessWidget {
+class SafeHerApp extends StatefulWidget {
   const SafeHerApp({super.key, required this.prefs});
 
   final SharedPreferences prefs;
 
   @override
+  State<SafeHerApp> createState() => _SafeHerAppState();
+}
+
+class _SafeHerAppState extends State<SafeHerApp> {
+  // Shake and scream fire outside any screen, so they reach the navigator directly.
+  final _navigatorKey = GlobalKey<NavigatorState>();
+  late final _contacts = ContactsStore(widget.prefs);
+  late final _settings = SettingsStore(widget.prefs);
+  late final _sos = SosController(widget.prefs);
+  late final _protection = ProtectionService(
+    settings: _settings,
+    sos: _sos,
+    onTrigger: (trigger, detail) {
+      final context = _navigatorKey.currentContext;
+      if (context != null) startSos(context, trigger, detail: detail);
+    },
+  );
+
+  @override
+  void dispose() {
+    _protection.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ContactsStore(prefs)),
-        ChangeNotifierProvider(create: (_) => SosController(prefs)),
+        ChangeNotifierProvider.value(value: _contacts),
+        ChangeNotifierProvider.value(value: _settings),
+        ChangeNotifierProvider.value(value: _sos),
+        ChangeNotifierProvider.value(value: _protection),
       ],
       child: MaterialApp(
+        navigatorKey: _navigatorKey,
         title: 'SafeHer',
         debugShowCheckedModeBanner: false,
         theme: buildTheme(),

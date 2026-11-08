@@ -8,13 +8,14 @@ import 'location_service.dart';
 import 'permissions.dart';
 import 'sms_sender.dart';
 
-enum SosTrigger { hold, shake, scream }
+enum SosTrigger { hold, shake, scream, loudSound }
 
 extension SosTriggerLabel on SosTrigger {
   String get label => switch (this) {
     SosTrigger.hold => 'holding the SOS button',
     SosTrigger.shake => 'shake to alert',
     SosTrigger.scream => 'scream detection',
+    SosTrigger.loudSound => 'a very loud sound (AI check offline)',
   };
 }
 
@@ -60,6 +61,13 @@ class SosController extends ChangeNotifier {
 
   SosAlert? _active;
   SosAlert? get active => _active;
+
+  bool _countingDown = false;
+
+  /// True while a countdown or alert is on screen, so other triggers don't stack up.
+  bool get busy => _countingDown || _active != null;
+
+  set countingDown(bool v) => _countingDown = v;
 
   Future<void> dispatch({required SosTrigger trigger, required List<TrustedContact> recipients}) async {
     final alert = SosAlert(trigger: trigger, startedAt: DateTime.now());
