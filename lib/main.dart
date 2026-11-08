@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'data/contacts_store.dart';
+import 'data/reports_store.dart';
 import 'data/settings_store.dart';
 import 'screens/circle_screen.dart';
 import 'screens/home_screen.dart';
@@ -30,6 +31,7 @@ class _SafeHerAppState extends State<SafeHerApp> {
   final _navigatorKey = GlobalKey<NavigatorState>();
   late final _contacts = ContactsStore(widget.prefs);
   late final _settings = SettingsStore(widget.prefs);
+  late final _reports = ReportsStore(widget.prefs);
   late final _sos = SosController(widget.prefs);
   late final _protection = ProtectionService(
     settings: _settings,
@@ -52,6 +54,7 @@ class _SafeHerAppState extends State<SafeHerApp> {
       providers: [
         ChangeNotifierProvider.value(value: _contacts),
         ChangeNotifierProvider.value(value: _settings),
+        ChangeNotifierProvider.value(value: _reports),
         ChangeNotifierProvider.value(value: _sos),
         ChangeNotifierProvider.value(value: _protection),
       ],

@@ -32,6 +32,13 @@ class ProtectionService extends ChangeNotifier with WidgetsBindingObserver {
   late final ScreamDetector scream;
 
   bool _foreground = true;
+  bool _micHeld = false;
+
+  /// Another screen needs the microphone (e.g. recording a voice note); pause scream listening.
+  set micHeld(bool v) {
+    _micHeld = v;
+    _apply();
+  }
 
   /// While a test sheet is open, triggers are shown there instead of starting SOS.
   bool testMode = false;
@@ -51,7 +58,7 @@ class ProtectionService extends ChangeNotifier with WidgetsBindingObserver {
     } else {
       shake.stop();
     }
-    if (_foreground && settings.screamEnabled) {
+    if (_foreground && settings.screamEnabled && !_micHeld) {
       scream.start();
     } else if (scream.running) {
       scream.stop();

@@ -1,7 +1,8 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
+
+import 'gemini_client.dart';
 
 /// Gemini's verdict on one short audio clip.
 class DistressVerdict {
@@ -29,18 +30,17 @@ class DistressVerdict {
 /// Only clips that already crossed the loudness gate are sent, so a normal day
 /// makes very few requests. Audio is never written to disk.
 class DistressChecker {
-  DistressChecker({http.Client? client, String? apiKey})
-    : _client = client ?? http.Client(),
-      _apiKey = apiKey ?? const String.fromEnvironment('GEMINI_API_KEY');
+  DistressChecker({http.Client? client, String? apiKey}) : _gemini = GeminiClient(client: client, apiKey: apiKey);
 
   // Picked by measurement: ~2-3 s per clip with minimal thinking, and correct on test clips.
-  static const model = 'gemini-flash-lite-latest';
+  static const models = [
+    GeminiModel('gemini-flash-lite-latest', {'thinkingLevel': 'minimal'}),
+  ];
   static const timeout = Duration(seconds: 8);
 
-  final http.Client _client;
-  final String _apiKey;
+  final GeminiClient _gemini;
 
-  bool get configured => _apiKey.isNotEmpty;
+  bool get configured => _gemini.configured;
 
   static const _prompt =
       'You are the safety check inside a personal-safety app in Bangladesh. The phone heard a sudden loud '
@@ -49,7 +49,7 @@ class DistressChecker {
       'Normal loud talk, laughter, cheering, music, traffic, horns or TV are NOT distress. '
       "Be careful: a false alarm alerts the user's family.";
 
-  static const _schema = {
+  static const Map<String, Object> _schema = {
     'type': 'OBJECT',
     'properties': {
       'distress': {'type': 'BOOLEAN'},
@@ -66,37 +66,18 @@ class DistressChecker {
   /// Returns null when Gemini can't be reached or answers badly; callers decide what that means.
   Future<DistressVerdict?> check(Uint8List wav) async {
     if (!configured) return null;
-    final body = jsonEncode({
-      'contents': [
-        {
-          'parts': [
-            {
-              'inline_data': {'mime_type': 'audio/wav', 'data': base64Encode(wav)},
-            },
-            {'text': _prompt},
-          ],
-        },
-      ],
-      'generationConfig': {
-        'responseMimeType': 'application/json',
-        'responseSchema': _schema,
-        'temperature': 0,
-        'thinkingConfig': {'thinkingLevel': 'minimal'},
-      },
-    });
     try {
-      final res = await _client
-          .post(
-            Uri.parse('https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent'),
-            headers: {'x-goog-api-key': _apiKey, 'Content-Type': 'application/json'},
-            body: body,
-          )
-          .timeout(timeout);
-      if (res.statusCode != 200) return null;
-      final data = jsonDecode(res.body) as Map<String, dynamic>;
-      final text = data['candidates'][0]['content']['parts'][0]['text'] as String;
-      return DistressVerdict.fromJson(jsonDecode(text) as Map<String, dynamic>);
-    } catch (_) {
+      final json = await _gemini.generateJson(
+        models: models,
+        parts: [
+          inlineData('audio/wav', wav),
+          {'text': _prompt},
+        ],
+        schema: _schema,
+        timeout: timeout,
+      );
+      return DistressVerdict.fromJson(json);
+    } on GeminiException {
       return null;
     }
   }

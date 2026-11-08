@@ -13,6 +13,7 @@ import '../widgets/hold_to_alert.dart';
 import 'circle_screen.dart';
 import 'helplines_screen.dart';
 import 'protection_sheets.dart';
+import 'reports_screen.dart';
 import 'sos_countdown_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -125,11 +126,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   title: 'Start a safe journey',
                   trailing: _SoonTag(),
                 ),
-                const SafeRow(
-                  leading: LeadIcon(Icons.description),
+                SafeRow(
+                  leading: const LeadIcon(Icons.description),
                   title: 'Write down what happened',
-                  subtitle: 'Speak in Bangla or English',
-                  trailing: _SoonTag(),
+                  subtitle: 'Speak in Bangla or English · AI writes it up',
+                  trailing: const Icon(Icons.chevron_right, color: SafeColors.faint),
+                  onTap: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const ReportsScreen())),
                   divider: false,
                 ),
                 const SizedBox(height: 16),
