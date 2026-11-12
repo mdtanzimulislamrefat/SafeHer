@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:safeher/data/contacts_store.dart';
+import 'package:safeher/data/settings_store.dart';
 import 'package:safeher/data/trusted_contact.dart';
+import 'package:safeher/screens/settings_screen.dart';
 import 'package:safeher/screens/sos_countdown_screen.dart';
 import 'package:safeher/services/location_service.dart';
 import 'package:safeher/services/sms_sender.dart';
 import 'package:safeher/services/sos_controller.dart';
 import 'package:safeher/theme.dart';
+import 'package:safeher/widgets/safeher_mark.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FakeSms extends SmsSender {
@@ -98,6 +102,23 @@ void main() {
     });
   });
 
+  test('SOS uses her name, and skips location when sharing is off', () async {
+    SharedPreferences.setMockInitialValues({'user_name': 'Rumana', 'location_sharing': 'off'});
+    final prefs = await SharedPreferences.getInstance();
+    final sms = FakeSms([SmsOutcome.sent]);
+    final c = SosController(
+      prefs,
+      settings: SettingsStore(prefs),
+      sms: sms,
+      location: FakeLocation(),
+      smsAllowed: () async => true,
+    );
+    await c.dispatch(trigger: SosTrigger.hold, recipients: [ammu]);
+    expect(sms.sent.single.$2, startsWith('SafeHer SOS from Rumana'));
+    expect(sms.sent.single.$2, isNot(contains('maps.google.com')));
+    expect(c.active!.location, isNull);
+  });
+
   testWidgets('cancelling the countdown sends nothing', (tester) async {
     final sms = FakeSms([SmsOutcome.sent]);
     final c = await controllerWith(sms);
@@ -133,5 +154,39 @@ void main() {
 
     expect(c.active, isNull);
     expect(sms.sent, isEmpty);
+  });
+
+  testWidgets('saving a name in Settings does not crash and updates the name', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final settings = SettingsStore(prefs);
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: settings),
+          ChangeNotifierProvider.value(value: ContactsStore(prefs)),
+        ],
+        child: MaterialApp(theme: buildTheme(), home: const SettingsScreen()),
+      ),
+    );
+    await tester.tap(find.text('Add your name'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'Rumana');
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(settings.userName, 'Rumana');
+    expect(find.text('Rumana'), findsOneWidget);
+  });
+
+  testWidgets('the logo draws and is announced as SafeHer', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(body: Center(child: SafeHerLogo())),
+      ),
+    );
+    expect(find.bySemanticsLabel('SafeHer'), findsOneWidget);
+    expect(find.byType(CustomPaint), findsWidgets);
+    expect(tester.takeException(), isNull);
   });
 }

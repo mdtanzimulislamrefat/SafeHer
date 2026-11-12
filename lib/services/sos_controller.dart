@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../data/settings_store.dart';
 import '../data/trusted_contact.dart';
 import 'location_service.dart';
 import 'permissions.dart';
@@ -48,13 +49,21 @@ class SosAlert {
 
 /// Runs one SOS alert from "countdown finished" to "I'm safe".
 class SosController extends ChangeNotifier {
-  SosController(this._prefs, {SmsSender? sms, LocationService? location, Future<bool> Function()? smsAllowed})
-    : _sms = sms ?? SmsSender(),
-      _location = location ?? LocationService(),
-      _smsAllowed = smsAllowed ?? hasSmsPermission;
+  SosController(
+    this._prefs, {
+    this.settings,
+    SmsSender? sms,
+    LocationService? location,
+    Future<bool> Function()? smsAllowed,
+  }) : _sms = sms ?? SmsSender(),
+       _location = location ?? LocationService(),
+       _smsAllowed = smsAllowed ?? hasSmsPermission;
 
   static const _logKey = 'sos_log_v1';
   final SharedPreferences _prefs;
+
+  /// Her name and location-sharing choice; absent in tests means "share, no name".
+  final SettingsStore? settings;
   final SmsSender _sms;
   final LocationService _location;
   final Future<bool> Function() _smsAllowed;
@@ -78,7 +87,8 @@ class SosController extends ChangeNotifier {
     // Write the alert down before touching the network, so it survives a crash or no signal.
     await _log({'at': alert.startedAt.toIso8601String(), 'trigger': trigger.name, 'to': recipients.length});
 
-    alert.location = await _location.forAlert();
+    // Location sharing turned off in Settings: don't even read it.
+    alert.location = settings?.locationSharing == LocationSharing.off ? null : await _location.forAlert();
     alert.locationDone = true;
     notifyListeners();
 
@@ -111,7 +121,7 @@ class SosController extends ChangeNotifier {
     notifyListeners();
     if (alert == null || !tellCircle || !await _smsAllowed()) return;
     final reached = alert.deliveries.where((d) => d.outcome == SmsOutcome.sent);
-    await Future.wait(reached.map((d) => _sms.send(d.contact.phone, "SafeHer: I'm safe now. Thank you.")));
+    await Future.wait(reached.map((d) => _sms.send(d.contact.phone, "SafeHer${_from()}: I'm safe now. Thank you.")));
     await _log({'at': DateTime.now().toIso8601String(), 'event': 'safe'});
   }
 
@@ -127,7 +137,8 @@ class SosController extends ChangeNotifier {
   }
 
   String _sosMessage(SosAlert alert, {required bool includeLocation}) {
-    final b = StringBuffer('SafeHer SOS: I need help now. Please call me.');
+    final name = settings?.userName ?? '';
+    final b = StringBuffer('SafeHer SOS${name.isEmpty ? '' : ' from $name'}: I need help now. Please call me.');
     final loc = alert.location;
     if (!includeLocation) {
       // Contact isn't allowed to see location; say nothing about it.
@@ -145,5 +156,10 @@ class SosController extends ChangeNotifier {
     final log = _prefs.getStringList(_logKey) ?? [];
     log.add(jsonEncode(entry));
     await _prefs.setStringList(_logKey, log);
+  }
+
+  String _from() {
+    final name = settings?.userName ?? '';
+    return name.isEmpty ? '' : ' ($name)';
   }
 }

@@ -8,6 +8,9 @@ import 'data/settings_store.dart';
 import 'screens/ask_screen.dart';
 import 'screens/circle_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/journey_screen.dart';
+import 'services/journey_controller.dart';
+import 'services/journey_platform.dart';
 import 'services/protection_service.dart';
 import 'services/sos_controller.dart';
 import 'theme.dart';
@@ -33,7 +36,12 @@ class _SafeHerAppState extends State<SafeHerApp> {
   late final _contacts = ContactsStore(widget.prefs);
   late final _settings = SettingsStore(widget.prefs);
   late final _reports = ReportsStore(widget.prefs);
-  late final _sos = SosController(widget.prefs);
+  late final _journey = JourneyController(
+    tracker: GeolocatorTracker(),
+    notifier: LocalJourneyNotifier(),
+    settings: _settings,
+  );
+  late final _sos = SosController(widget.prefs, settings: _settings);
   late final _protection = ProtectionService(
     settings: _settings,
     sos: _sos,
@@ -46,6 +54,7 @@ class _SafeHerAppState extends State<SafeHerApp> {
   @override
   void dispose() {
     _protection.dispose();
+    _journey.dispose();
     super.dispose();
   }
 
@@ -56,6 +65,7 @@ class _SafeHerAppState extends State<SafeHerApp> {
         ChangeNotifierProvider.value(value: _contacts),
         ChangeNotifierProvider.value(value: _settings),
         ChangeNotifierProvider.value(value: _reports),
+        ChangeNotifierProvider.value(value: _journey),
         ChangeNotifierProvider.value(value: _sos),
         ChangeNotifierProvider.value(value: _protection),
       ],
@@ -83,18 +93,7 @@ class _AppShellState extends State<AppShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _tab,
-        children: const [
-          HomeScreen(),
-          _ComingSoon(
-            title: 'Safe Journey',
-            text: 'Share your trip with your circle, check in on the way, and get a nudge if something looks off.',
-          ),
-          AskScreen(),
-          CircleScreen(),
-        ],
-      ),
+      body: IndexedStack(index: _tab, children: const [HomeScreen(), JourneyScreen(), AskScreen(), CircleScreen()]),
       bottomNavigationBar: DecoratedBox(
         decoration: const BoxDecoration(
           border: Border(top: BorderSide(color: SafeColors.line)),
@@ -111,33 +110,6 @@ class _AppShellState extends State<AppShell> {
               label: 'Ask',
             ),
             NavigationDestination(icon: Icon(Icons.people_outline), selectedIcon: Icon(Icons.people), label: 'Circle'),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ComingSoon extends StatelessWidget {
-  const _ComingSoon({required this.title, required this.text});
-
-  final String title;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: SafeText.heading(30)),
-            const SizedBox(height: 8),
-            Text(text, style: SafeText.small),
-            const SizedBox(height: 16),
-            const Text('Coming in the next build.', style: SafeText.bodyStrong),
           ],
         ),
       ),

@@ -6,6 +6,7 @@ import '../services/gemini_client.dart';
 import '../services/guide_answerer.dart';
 import '../services/sos_controller.dart';
 import '../theme.dart';
+import '../widgets/safeher_mark.dart';
 import 'helplines_screen.dart';
 import 'home_screen.dart';
 
@@ -199,6 +200,19 @@ class _Answer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const Padding(
+            padding: EdgeInsets.only(bottom: 6),
+            child: Row(
+              children: [
+                SafeHerMark(size: 18),
+                SizedBox(width: 6),
+                Text(
+                  'SafeHer',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: SafeColors.plum),
+                ),
+              ],
+            ),
+          ),
           if (a.urgent) const _UrgentCard(),
           SelectableText(a.text, style: const TextStyle(fontSize: 15, height: 1.6, color: SafeColors.ink)),
           if (numbers.isNotEmpty) ...[

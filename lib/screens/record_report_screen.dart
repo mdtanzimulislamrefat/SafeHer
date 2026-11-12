@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 
 import '../data/incident_report.dart';
+import '../data/settings_store.dart';
 import '../services/gemini_client.dart';
 import '../services/protection_service.dart';
 import '../services/report_drafter.dart';
@@ -112,6 +113,23 @@ class _RecordReportScreenState extends State<RecordReportScreen> {
     if (!fromVoice && typed.isEmpty) {
       _snack('Write a few words about what happened first.');
       return;
+    }
+    if (context.read<SettingsStore>().confirmBeforeDrafting) {
+      final ok = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Send to Gemini?'),
+          content: Text(
+            'Your ${fromVoice ? 'voice note' : 'note'} will be sent to Google Gemini to write the draft. '
+            'You can turn this question off in Settings.',
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Not now')),
+            FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Send')),
+          ],
+        ),
+      );
+      if (ok != true || !mounted) return;
     }
     setState(() => _stage = _Stage.drafting);
     final drafter = ReportDrafter();

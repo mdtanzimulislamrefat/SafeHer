@@ -9,6 +9,13 @@
     <!-- Scream check: loudness is measured on the phone; short loud clips go to Gemini. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Safe Journey: keeps GPS and check-in timers running with the screen off, and asks to check in. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <!-- Fake Call: plays the phone's own ringtone and vibration. -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-feature android:name="android.hardware.telephony" android:required="false"/>
     <application
         android:label="SafeHer"

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../data/contacts_store.dart';
 import '../data/settings_store.dart';
+import '../services/journey_controller.dart';
 import '../services/permissions.dart';
 import '../services/protection_service.dart';
 import '../services/scream_detector.dart';
@@ -10,10 +11,14 @@ import '../services/sos_controller.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 import '../widgets/hold_to_alert.dart';
+import '../widgets/safeher_mark.dart';
 import 'circle_screen.dart';
+import 'fake_call_screen.dart';
 import 'helplines_screen.dart';
+import 'journey_screen.dart';
 import 'protection_sheets.dart';
 import 'reports_screen.dart';
+import 'settings_screen.dart';
 import 'sos_countdown_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -63,7 +68,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 20,
-        title: Text('SafeHer', style: SafeText.heading(20, color: SafeColors.plum)),
+        title: const SafeHerLogo(),
+        actions: [
+          IconButton(
+            tooltip: 'Settings',
+            icon: const Icon(Icons.settings, color: SafeColors.muted),
+            onPressed: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const SettingsScreen())),
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: Column(
         children: [
@@ -72,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               children: [
                 const SizedBox(height: 6),
-                Text(_greeting(DateTime.now()), style: SafeText.heading(30)),
+                Text(_greeting(DateTime.now(), context.watch<SettingsStore>().userName), style: SafeText.heading(30)),
                 const SizedBox(height: 10),
                 _CircleSummary(names: contacts.map((c) => c.name).toList()),
                 if (_smsReady == false && contacts.isNotEmpty) ...[
@@ -121,10 +134,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   onTap: () =>
                       Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const HelplinesScreen())),
                 ),
-                const SafeRow(
-                  leading: LeadIcon(Icons.place, color: SafeColors.teal, background: SafeColors.tealSoft),
-                  title: 'Start a safe journey',
-                  trailing: _SoonTag(),
+                SafeRow(
+                  leading: const LeadIcon(Icons.place, color: SafeColors.teal, background: SafeColors.tealSoft),
+                  title: context.watch<JourneyController>().onJourney ? 'Journey in progress' : 'Start a safe journey',
+                  subtitle: 'Check-ins tell your circle if something is wrong',
+                  trailing: const Icon(Icons.chevron_right, color: SafeColors.faint),
+                  onTap: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const JourneyScreen())),
                 ),
                 SafeRow(
                   leading: const LeadIcon(Icons.description),
@@ -132,6 +147,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   subtitle: 'Speak in Bangla or English · AI writes it up',
                   trailing: const Icon(Icons.chevron_right, color: SafeColors.faint),
                   onTap: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const ReportsScreen())),
+                ),
+                SafeRow(
+                  leading: const LeadIcon(Icons.phone_callback),
+                  title: 'Fake call',
+                  subtitle: 'A reason to step away',
+                  trailing: const Icon(Icons.chevron_right, color: SafeColors.faint),
+                  onTap: () =>
+                      Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const FakeCallSetupScreen())),
                   divider: false,
                 ),
                 const SizedBox(height: 16),
@@ -148,13 +171,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 }
 
-String _greeting(DateTime now) {
+String _greeting(DateTime now, String name) {
   final h = now.hour;
-  if (h >= 5 && h < 12) return 'শুভ সকাল';
-  if (h >= 12 && h < 16) return 'শুভ দুপুর';
-  if (h >= 16 && h < 18) return 'শুভ বিকেল';
-  if (h >= 18 && h < 21) return 'শুভ সন্ধ্যা';
-  return 'শুভ রাত্রি';
+  final hello = switch (h) {
+    >= 5 && < 12 => 'শুভ সকাল',
+    >= 12 && < 16 => 'শুভ দুপুর',
+    >= 16 && < 18 => 'শুভ বিকেল',
+    >= 18 && < 21 => 'শুভ সন্ধ্যা',
+    _ => 'শুভ রাত্রি',
+  };
+  return name.isEmpty ? hello : '$hello, $name';
 }
 
 /// Shared entry point for every SOS trigger (hold now; shake and scream later).
@@ -265,22 +291,6 @@ class _SetupBanner extends StatelessWidget {
           TextButton(onPressed: onTap, child: const Text('Turn on')),
         ],
       ),
-    );
-  }
-}
-
-class _SoonTag extends StatelessWidget {
-  const _SoonTag();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        border: Border.all(color: SafeColors.line),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: const Text('Soon', style: SafeText.caption),
     );
   }
 }

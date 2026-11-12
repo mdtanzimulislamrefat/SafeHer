@@ -44,6 +44,11 @@ class ContactsStore extends ChangeNotifier {
     await _persist();
   }
 
+  Future<void> clear() async {
+    _contacts.clear();
+    await _persist();
+  }
+
   Future<void> _persist() async {
     notifyListeners();
     await _prefs.setString(_key, jsonEncode(_contacts.map((c) => c.toJson()).toList()));

@@ -19,6 +19,9 @@ abstract final class SafeColors {
   static const amberSoft = Color(0xFFFBEBD3);
   static const teal = Color(0xFF0F5E63);
   static const tealSoft = Color(0xFFDDEDEE);
+
+  /// The logo's dot only; never used for text or status.
+  static const amberMark = Color(0xFFF2B544);
 }
 
 abstract final class SafeText {

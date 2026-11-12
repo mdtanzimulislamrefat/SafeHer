@@ -48,6 +48,13 @@ class ReportsStore extends ChangeNotifier {
     await _persist();
   }
 
+  /// Removes every report and voice note.
+  Future<void> clear() async {
+    for (final r in List.of(_reports)) {
+      await delete(r);
+    }
+  }
+
   Future<void> _persist() async {
     notifyListeners();
     await _prefs.setString(_key, jsonEncode(_reports.map((r) => r.toJson()).toList()));
